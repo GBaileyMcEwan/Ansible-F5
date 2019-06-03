@@ -1,0 +1,47 @@
+---
+- name: install hackazon server 
+  hosts: 10.1.20.102
+  remote_user: niftyshorts
+  become: yes
+  pre_tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
+  vars:
+    state: absent
+
+  tasks:
+    - name: uninstall curl
+      apt:
+        name: curl
+        state: "{{ state }}"
+        update_cache: yes
+       
+    - name: Uninstall add-apt-repository command
+      apt:
+        name: software-properties-common
+        state: "{{ state }}" 
+
+    - name: Stop HackazonContainer1
+      shell: docker stop Hackazon
+
+    - name: Stop HackazonContainer2
+      shell: docker stop Hackazon2
+
+    - name: Stop HackazonContainer3
+      shell: docker stop Hackazon3
+
+    - name: DeleteHackazonContainer1
+      shell: docker rm Hackazon
+
+    - name: DeleteHackazonContainer2
+      shell: docker rm Hackazon2
+
+    - name: DeleteHackazonContainer3
+      shell: docker rm Hackazon3
+
+    - name: Uninstall Docker
+      apt:
+        name: docker-ce
+        state: "{{ state }}"
+        update-cache: yes
